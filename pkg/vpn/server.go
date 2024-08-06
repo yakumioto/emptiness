@@ -4,71 +4,69 @@ import (
 	"net"
 	"sync"
 
-	"github.com/songgao/water"
-
 	"github.com/yakumioto/emptiness/protos/vpn"
 )
 
-type clientConn struct {
-	tunnelID string // client tunnel id
-
-	ip  net.IP   // client vpn ip
-	ips sync.Map // client child vpn ip list
-
-	stream vpn.VPN_TransferDataServer
-
-	in  chan *vpn.DataPacket // Send to VPN server
-	out chan *vpn.DataPacket // Send to client conn
+// TunnelManager manages VPN tunnels, their associated connections and IPs
+type TunnelManager struct {
+	conns sync.Map // map[string]Conn
+	ips   sync.Map // map[string]map[string]struct{}
 }
 
-func (c *clientConn) AddIP(ip string) {
-	c.ips.Store(ip, true)
+// NewTunnelManager creates a new TunnelManager instance
+func NewTunnelManager() *TunnelManager {
+	return &TunnelManager{}
 }
 
-func (c *clientConn) DelIP(ip string) {
-	c.ips.Delete(ip)
+// AddTunnel adds a new tunnel with its associated connection
+func (m *TunnelManager) AddTunnel(tunnelID string, conn Conn) {
+	m.conns.Store(tunnelID, conn)
+	m.ips.Store(tunnelID, make(map[string]struct{}))
 }
 
-func (c *clientConn) HasIP(ip string) bool {
-	_, ok := c.ips.Load(ip)
-	return ok
+// RemoveTunnel removes a tunnel and its associated data
+func (m *TunnelManager) RemoveTunnel(tunnelID string) {
+	m.conns.Delete(tunnelID)
+	m.ips.Delete(tunnelID)
 }
 
-type clientPool struct {
-	clients sync.Map
-}
-
-func (c *clientPool) AddClient(ip string, client *clientConn) {
-	client.AddIP(ip)
-	c.clients.Store(ip, client)
-}
-
-func (c *clientPool) GetClient(ip string) *clientConn {
-	if c, ok := c.clients.Load(ip); ok {
-		return c.(*clientConn)
+// AddIP adds an IP to a specific tunnel
+func (m *TunnelManager) AddIP(tunnelID, ip string) {
+	if ips, ok := m.ips.Load(tunnelID); ok {
+		ips.(map[string]struct{})[ip] = struct{}{}
 	}
-
-	return nil
 }
 
-func (c *clientPool) DelClient(ip string) {
-	client := c.GetClient(ip)
-	if client != nil {
-		client.DelIP(ip)
+// DelIP removes an IP from a specific tunnel
+func (m *TunnelManager) DelIP(tunnelID, ip string) {
+	if ips, ok := m.ips.Load(tunnelID); ok {
+		delete(ips.(map[string]struct{}), ip)
 	}
-
-	c.clients.Delete(ip)
 }
 
+// HasIP checks if a specific tunnel has an IP
+func (m *TunnelManager) HasIP(tunnelID, ip string) bool {
+	if ips, ok := m.ips.Load(tunnelID); ok {
+		_, exists := ips.(map[string]struct{})[ip]
+		return exists
+	}
+	return false
+}
+
+// GetConn retrieves the connection associated with a tunnel
+func (m *TunnelManager) GetConn(tunnelID string) (Conn, bool) {
+	conn, ok := m.conns.Load(tunnelID)
+	if !ok {
+		return nil, false
+	}
+	return conn.(Conn), true
+}
+
+// Server represents the VPN server
 type Server struct {
-	tun     *water.Interface
-	tunName string
-
-	ip      net.IP
 	netMask net.IPMask
 
-	clients *clientPool
+	Tunnels *TunnelManager
 
-	in  chan *vpn.DataPacket // Recv by tun device and client
-	out chan *vpn.DataPacket // Send to tun device
+	in chan *vpn.DataPacket // Receives packets from tun device and clients for processing
 }
