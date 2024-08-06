@@ -17,7 +17,8 @@ message ConnectRequest {
 
 message ConnectResponse {
   string tunnel_id = 1;
-  StatusCode code = 2;
+  string data = 2;
+  StatusCode code = 3;
 }
 
 message DisconnectRequest {
