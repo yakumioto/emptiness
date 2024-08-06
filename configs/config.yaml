@@ -1,0 +1,14 @@
+server:
+  port: 9527
+  address: 192.88.99.1/32
+  allowedIPs : 192.88.99.0/24
+
+client:
+  endpoint: 127.0.0.1:9527
+  address: 192.88.99.2/32
+  keepalive: 25s
+
+auth:
+  type: xor
+  xor:
+    key: "k8^4yCjMaG#wC!U@LKY8uf!v5utIztZL"

@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+option go_package = "module github.com/yakumioto/emptiness/protos/vpn";
+
+service VPN {
+  rpc Connect(ConnectRequest) returns(ConnectResponse);
+  rpc Disconnect(DisconnectRequest) returns(DisconnectResponse);
+  rpc RegisterRoute(RouteRequest) returns(RouteResponse);
+  rpc UnregisterRoute(RouteRequest) returns(RouteResponse);
+  rpc TransferData(stream DataPacket) returns (stream DataPacket);
+}
+
+message ConnectRequest {
+  AuthType auth_type = 1;
+  string data = 2;
+}
+
+message ConnectResponse {
+  string tunnel_id = 1;
+  StatusCode code = 2;
+}
+
+message DisconnectRequest {
+  string data = 1;
+}
+
+message DisconnectResponse {
+  StatusCode code = 1;
+}
+
+message RouteRequest {
+  string tunnel_id = 1;
+  repeated string route = 2;
+}
+
+message RouteResponse {
+  StatusCode code = 1;
+}
+
+message DataPacket {
+  string tunnel_id = 1;
+  bytes data = 2;
+}
+
+enum AuthType {
+  NONE = 0;
+  XOR = 1;
+}
+
+enum StatusCode {
+  OK = 0;
+  UNKNOWN_ERROR = 1;
+  INVALID_AUTHORIZATION = 2;
+}
