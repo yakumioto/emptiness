@@ -6,12 +6,12 @@ import (
 	"github.com/yakumioto/emptiness/protos/vpn"
 )
 
-type Conn interface {
+type Tunnel interface {
 	Reading()
 	Writing()
 }
 
-type connClient struct {
+type clientTunnel struct {
 	tunnelID string // client tunnel id
 	stream   vpn.VPN_TransferDataServer
 
@@ -19,17 +19,17 @@ type connClient struct {
 	out      chan *vpn.DataPacket // Send to client conn
 }
 
-func (c *connClient) Reading() {
+func (c *clientTunnel) Reading() {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c *connClient) Writing() {
+func (c *clientTunnel) Writing() {
 	//TODO implement me
 	panic("implement me")
 }
 
-type connTUNDevice struct {
+type tunTunnel struct {
 	tunnelID string
 	tun      *water.Interface
 
@@ -37,12 +37,12 @@ type connTUNDevice struct {
 	out      chan *vpn.DataPacket // Send to device conn
 }
 
-func (d *connTUNDevice) Reading() {
+func (d *tunTunnel) Reading() {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (d *connTUNDevice) Writing() {
+func (d *tunTunnel) Writing() {
 	//TODO implement me
 	panic("implement me")
 }

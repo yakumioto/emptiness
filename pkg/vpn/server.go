@@ -9,7 +9,7 @@ import (
 
 // TunnelManager manages VPN tunnels, their associated connections and IPs
 type TunnelManager struct {
-	conns sync.Map // map[string]Conn
+	conns sync.Map // map[string]Tunneler
 	ips   sync.Map // map[string]map[string]struct{}
 }
 
@@ -19,7 +19,7 @@ func NewTunnelManager() *TunnelManager {
 }
 
 // AddTunnel adds a new tunnel with its associated connection
-func (m *TunnelManager) AddTunnel(tunnelID string, conn Conn) {
+func (m *TunnelManager) AddTunnel(tunnelID string, conn Tunnel) {
 	m.conns.Store(tunnelID, conn)
 	m.ips.Store(tunnelID, make(map[string]struct{}))
 }
@@ -54,12 +54,12 @@ func (m *TunnelManager) HasIP(tunnelID, ip string) bool {
 }
 
 // GetConn retrieves the connection associated with a tunnel
-func (m *TunnelManager) GetConn(tunnelID string) (Conn, bool) {
+func (m *TunnelManager) GetConn(tunnelID string) (Tunnel, bool) {
 	conn, ok := m.conns.Load(tunnelID)
 	if !ok {
 		return nil, false
 	}
-	return conn.(Conn), true
+	return conn.(Tunnel), true
 }
 
 // Server represents the VPN server
