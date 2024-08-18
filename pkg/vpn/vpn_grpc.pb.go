@@ -4,7 +4,7 @@
 // - protoc             v5.27.1
 // source: vpn.proto
 
-package protobuf
+package vpn
 
 import (
 	context "context"

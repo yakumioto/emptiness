@@ -1,6 +1,6 @@
 package tunnel
 
-import "github.com/yakumioto/emptiness/protos/vpn"
+import "github.com/yakumioto/emptiness/pkg/vpn"
 
 type conn struct {
 	tunnelID string // client tunnel id

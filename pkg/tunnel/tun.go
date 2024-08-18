@@ -3,7 +3,7 @@ package tunnel
 import (
 	"github.com/songgao/water"
 
-	"github.com/yakumioto/emptiness/protos/vpn"
+	"github.com/yakumioto/emptiness/pkg/vpn"
 )
 
 type tun struct {

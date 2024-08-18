@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "module github.com/yakumioto/emptiness/protobuf";
+option go_package = "module github.com/yakumioto/emptiness/pkg/vpn";
 
 service VPN {
   rpc Connect(ConnectRequest) returns(ConnectResponse);
