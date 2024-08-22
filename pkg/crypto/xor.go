@@ -1,11 +1,13 @@
 package crypto
 
+import "github.com/yakumioto/dipper/utils"
+
 type XOR struct {
 	key []byte
 }
 
 func NewXOR(key []byte) *XOR {
-	return &XOR{key: key}
+	return &XOR{key: utils.ExtendKey(key, 32)}
 }
 
 func (X *XOR) Encrypt(plaintext []byte) ([]byte, error) {
