@@ -3,30 +3,29 @@ syntax = "proto3";
 option go_package = "module github.com/yakumioto/emptiness/pkg/vpn";
 
 service VPN {
-  rpc Connect(ConnectRequest) returns(ConnectResponse);
-  rpc Disconnect(DisconnectRequest) returns(DisconnectResponse);
-  rpc RegisterRoute(RouteRequest) returns(RouteResponse);
-  rpc UnregisterRoute(RouteRequest) returns(RouteResponse);
+  rpc Connect(Request) returns(Response);
+  rpc Disconnect(Request) returns(Response);
+  rpc RegisterRoute(Request) returns(Response);
+  rpc UnregisterRoute(Request) returns(Response);
   rpc TransferData(stream DataPacket) returns (stream DataPacket);
 }
 
-message ConnectRequest {
-  AuthType auth_type = 1;
-  string data = 2;
+message Request {
+  bytes encrypted_payload = 1;
 }
 
-message ConnectResponse {
+message Response {
+  StatusCode code = 1;
+}
+
+message ConnectRequest {
   string tunnel_id = 1;
-  string data = 2;
-  StatusCode code = 3;
+  int64 timestamp = 2;
+  string nonce = 3;
 }
 
 message DisconnectRequest {
-  string data = 1;
-}
-
-message DisconnectResponse {
-  StatusCode code = 1;
+  string tunnel_id = 1;
 }
 
 message RouteRequest {
@@ -34,13 +33,9 @@ message RouteRequest {
   repeated string route = 2;
 }
 
-message RouteResponse {
-  StatusCode code = 1;
-}
-
 message DataPacket {
   string tunnel_id = 1;
-  bytes data = 2;
+  bytes payload = 2;
 }
 
 enum AuthType {
@@ -52,4 +47,7 @@ enum StatusCode {
   OK = 0;
   UNKNOWN_ERROR = 1;
   INVALID_AUTHORIZATION = 2;
+  EXISTED_TUNNEL = 3;
+  EXISTED_ROUTE = 4;
+  NOT_FOUND_TUNNEL = 5;
 }

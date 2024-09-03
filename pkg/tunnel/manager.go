@@ -1,6 +1,8 @@
 package tunnel
 
-import "sync"
+import (
+	"sync"
+)
 
 // Manager manages VPN tunnels, their associated connections and IPs
 type Manager struct {
@@ -13,14 +15,20 @@ func NewTunnelManager() *Manager {
 	return &Manager{}
 }
 
+// HasTunnel checks if a tunnel exists
+func (m *Manager) HasTunnel(tunnelID string) bool {
+	_, ok := m.GetConn(tunnelID)
+	return ok
+}
+
 // AddTunnel adds a new tunnel with its associated connection
 func (m *Manager) AddTunnel(tunnelID string, conn Tunnel) {
 	m.connMap.Store(tunnelID, conn)
 	m.ipMap.Store(tunnelID, make(map[string]struct{}))
 }
 
-// RemoveTunnel removes a tunnel and its associated data
-func (m *Manager) RemoveTunnel(tunnelID string) {
+// DelTunnel removes a tunnel and its associated data
+func (m *Manager) DelTunnel(tunnelID string) {
 	m.connMap.Delete(tunnelID)
 	m.ipMap.Delete(tunnelID)
 }

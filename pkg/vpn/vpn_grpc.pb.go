@@ -30,10 +30,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VPNClient interface {
-	Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error)
-	Disconnect(ctx context.Context, in *DisconnectRequest, opts ...grpc.CallOption) (*DisconnectResponse, error)
-	RegisterRoute(ctx context.Context, in *RouteRequest, opts ...grpc.CallOption) (*RouteResponse, error)
-	UnregisterRoute(ctx context.Context, in *RouteRequest, opts ...grpc.CallOption) (*RouteResponse, error)
+	Connect(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	Disconnect(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	RegisterRoute(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	UnregisterRoute(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 	TransferData(ctx context.Context, opts ...grpc.CallOption) (VPN_TransferDataClient, error)
 }
 
@@ -45,9 +45,9 @@ func NewVPNClient(cc grpc.ClientConnInterface) VPNClient {
 	return &vPNClient{cc}
 }
 
-func (c *vPNClient) Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error) {
+func (c *vPNClient) Connect(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConnectResponse)
+	out := new(Response)
 	err := c.cc.Invoke(ctx, VPN_Connect_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -55,9 +55,9 @@ func (c *vPNClient) Connect(ctx context.Context, in *ConnectRequest, opts ...grp
 	return out, nil
 }
 
-func (c *vPNClient) Disconnect(ctx context.Context, in *DisconnectRequest, opts ...grpc.CallOption) (*DisconnectResponse, error) {
+func (c *vPNClient) Disconnect(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DisconnectResponse)
+	out := new(Response)
 	err := c.cc.Invoke(ctx, VPN_Disconnect_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -65,9 +65,9 @@ func (c *vPNClient) Disconnect(ctx context.Context, in *DisconnectRequest, opts 
 	return out, nil
 }
 
-func (c *vPNClient) RegisterRoute(ctx context.Context, in *RouteRequest, opts ...grpc.CallOption) (*RouteResponse, error) {
+func (c *vPNClient) RegisterRoute(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RouteResponse)
+	out := new(Response)
 	err := c.cc.Invoke(ctx, VPN_RegisterRoute_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -75,9 +75,9 @@ func (c *vPNClient) RegisterRoute(ctx context.Context, in *RouteRequest, opts ..
 	return out, nil
 }
 
-func (c *vPNClient) UnregisterRoute(ctx context.Context, in *RouteRequest, opts ...grpc.CallOption) (*RouteResponse, error) {
+func (c *vPNClient) UnregisterRoute(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RouteResponse)
+	out := new(Response)
 	err := c.cc.Invoke(ctx, VPN_UnregisterRoute_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -121,10 +121,10 @@ func (x *vPNTransferDataClient) Recv() (*DataPacket, error) {
 // All implementations must embed UnimplementedVPNServer
 // for forward compatibility
 type VPNServer interface {
-	Connect(context.Context, *ConnectRequest) (*ConnectResponse, error)
-	Disconnect(context.Context, *DisconnectRequest) (*DisconnectResponse, error)
-	RegisterRoute(context.Context, *RouteRequest) (*RouteResponse, error)
-	UnregisterRoute(context.Context, *RouteRequest) (*RouteResponse, error)
+	Connect(context.Context, *Request) (*Response, error)
+	Disconnect(context.Context, *Request) (*Response, error)
+	RegisterRoute(context.Context, *Request) (*Response, error)
+	UnregisterRoute(context.Context, *Request) (*Response, error)
 	TransferData(VPN_TransferDataServer) error
 	mustEmbedUnimplementedVPNServer()
 }
@@ -133,16 +133,16 @@ type VPNServer interface {
 type UnimplementedVPNServer struct {
 }
 
-func (UnimplementedVPNServer) Connect(context.Context, *ConnectRequest) (*ConnectResponse, error) {
+func (UnimplementedVPNServer) Connect(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Connect not implemented")
 }
-func (UnimplementedVPNServer) Disconnect(context.Context, *DisconnectRequest) (*DisconnectResponse, error) {
+func (UnimplementedVPNServer) Disconnect(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Disconnect not implemented")
 }
-func (UnimplementedVPNServer) RegisterRoute(context.Context, *RouteRequest) (*RouteResponse, error) {
+func (UnimplementedVPNServer) RegisterRoute(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterRoute not implemented")
 }
-func (UnimplementedVPNServer) UnregisterRoute(context.Context, *RouteRequest) (*RouteResponse, error) {
+func (UnimplementedVPNServer) UnregisterRoute(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnregisterRoute not implemented")
 }
 func (UnimplementedVPNServer) TransferData(VPN_TransferDataServer) error {
@@ -162,7 +162,7 @@ func RegisterVPNServer(s grpc.ServiceRegistrar, srv VPNServer) {
 }
 
 func _VPN_Connect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConnectRequest)
+	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -174,13 +174,13 @@ func _VPN_Connect_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: VPN_Connect_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VPNServer).Connect(ctx, req.(*ConnectRequest))
+		return srv.(VPNServer).Connect(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _VPN_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DisconnectRequest)
+	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -192,13 +192,13 @@ func _VPN_Disconnect_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: VPN_Disconnect_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VPNServer).Disconnect(ctx, req.(*DisconnectRequest))
+		return srv.(VPNServer).Disconnect(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _VPN_RegisterRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RouteRequest)
+	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -210,13 +210,13 @@ func _VPN_RegisterRoute_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: VPN_RegisterRoute_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VPNServer).RegisterRoute(ctx, req.(*RouteRequest))
+		return srv.(VPNServer).RegisterRoute(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _VPN_UnregisterRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RouteRequest)
+	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ func _VPN_UnregisterRoute_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: VPN_UnregisterRoute_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VPNServer).UnregisterRoute(ctx, req.(*RouteRequest))
+		return srv.(VPNServer).UnregisterRoute(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
