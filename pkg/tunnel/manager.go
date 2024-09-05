@@ -10,8 +10,8 @@ type Manager struct {
 	ipMap   sync.Map // map[string]map[string]struct{}
 }
 
-// NewTunnelManager creates a new Manager instance
-func NewTunnelManager() *Manager {
+// NewManager creates a new Manager instance
+func NewManager() *Manager {
 	return &Manager{}
 }
 

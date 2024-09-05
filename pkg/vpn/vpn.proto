@@ -10,12 +10,22 @@ service VPN {
   rpc TransferData(stream DataPacket) returns (stream DataPacket);
 }
 
+
+enum StatusCode {
+  OK = 0;
+  UNKNOWN_ERROR = 1;
+  INVALID_AUTHORIZATION = 2;
+  EXISTED_TUNNEL = 3;
+  EXISTED_ROUTE = 4;
+  NOT_FOUND_TUNNEL = 5;
+}
+
 message Request {
   bytes encrypted_payload = 1;
 }
 
 message Response {
-  StatusCode code = 1;
+  StatusCode status_code = 1;
 }
 
 message ConnectRequest {
@@ -35,19 +45,10 @@ message RouteRequest {
 
 message DataPacket {
   string tunnel_id = 1;
-  bytes payload = 2;
+  optional bytes encrypted_payload = 2;
 }
 
 enum AuthType {
   NONE = 0;
   XOR = 1;
-}
-
-enum StatusCode {
-  OK = 0;
-  UNKNOWN_ERROR = 1;
-  INVALID_AUTHORIZATION = 2;
-  EXISTED_TUNNEL = 3;
-  EXISTED_ROUTE = 4;
-  NOT_FOUND_TUNNEL = 5;
 }
