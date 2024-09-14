@@ -1,13 +1,13 @@
 package tunnel
 
-import "github.com/yakumioto/emptiness/pkg/vpn"
+import pb "github.com/yakumioto/emptiness/protobuf"
 
 type conn struct {
 	tunnelID string // client tunnel id
-	stream   vpn.VPN_TransferDataServer
+	stream   pb.VPN_TransferDataServer
 
-	out chan *vpn.DataPacket // Send to VPN server
-	in  chan *vpn.DataPacket // Send to client conn
+	out chan *pb.DataPacket // Read by gRPC stream out to tunnel manager.
+	in  chan *pb.DataPacket // Read by tunnel manager out to gRPC stream.
 }
 
 func (c *conn) Reading() {

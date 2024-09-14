@@ -4,7 +4,7 @@
 // - protoc             v5.27.1
 // source: vpn.proto
 
-package vpn
+package protobuf
 
 import (
 	context "context"
@@ -96,8 +96,8 @@ func (c *vPNClient) TransferData(ctx context.Context, opts ...grpc.CallOption) (
 }
 
 type VPN_TransferDataClient interface {
-	Send(*DataPacket) error
-	Recv() (*DataPacket, error)
+	Send(*StreamRequest) error
+	Recv() (*StreamResponse, error)
 	grpc.ClientStream
 }
 
@@ -105,12 +105,12 @@ type vPNTransferDataClient struct {
 	grpc.ClientStream
 }
 
-func (x *vPNTransferDataClient) Send(m *DataPacket) error {
+func (x *vPNTransferDataClient) Send(m *StreamRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *vPNTransferDataClient) Recv() (*DataPacket, error) {
-	m := new(DataPacket)
+func (x *vPNTransferDataClient) Recv() (*StreamResponse, error) {
+	m := new(StreamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -238,8 +238,8 @@ func _VPN_TransferData_Handler(srv interface{}, stream grpc.ServerStream) error 
 }
 
 type VPN_TransferDataServer interface {
-	Send(*DataPacket) error
-	Recv() (*DataPacket, error)
+	Send(*StreamResponse) error
+	Recv() (*StreamRequest, error)
 	grpc.ServerStream
 }
 
@@ -247,12 +247,12 @@ type vPNTransferDataServer struct {
 	grpc.ServerStream
 }
 
-func (x *vPNTransferDataServer) Send(m *DataPacket) error {
+func (x *vPNTransferDataServer) Send(m *StreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *vPNTransferDataServer) Recv() (*DataPacket, error) {
-	m := new(DataPacket)
+func (x *vPNTransferDataServer) Recv() (*StreamRequest, error) {
+	m := new(StreamRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}

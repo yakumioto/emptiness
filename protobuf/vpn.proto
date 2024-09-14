@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-option go_package = "module github.com/yakumioto/emptiness/pkg/vpn";
+option go_package = "module github.com/yakumioto/emptiness/protobuf";
 
 service VPN {
   rpc Connect(Request) returns(Response);
   rpc Disconnect(Request) returns(Response);
   rpc RegisterRoute(Request) returns(Response);
   rpc UnregisterRoute(Request) returns(Response);
-  rpc TransferData(stream DataPacket) returns (stream DataPacket);
+  rpc TransferData(stream StreamRequest) returns (stream StreamResponse);
 }
 
 
@@ -43,9 +43,24 @@ message RouteRequest {
   repeated string route = 2;
 }
 
+message StreamRequest {
+  bytes encrypted_payload = 1;
+}
+
+message StreamResponse {
+  bytes encrypted_payload = 1;
+}
+
+enum DataPacketType {
+  DATA = 0;
+  PING = 1;
+  PONG = 2;
+}
+
 message DataPacket {
   string tunnel_id = 1;
-  optional bytes encrypted_payload = 2;
+  int32 type = 2;
+  optional bytes payload = 3;
 }
 
 enum AuthType {

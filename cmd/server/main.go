@@ -8,7 +8,6 @@ import (
 	"github.com/yakumioto/emptiness/pkg/crypto"
 	"github.com/yakumioto/emptiness/pkg/server"
 	"github.com/yakumioto/emptiness/pkg/tunnel"
-	"github.com/yakumioto/emptiness/pkg/vpn"
 )
 
 func main() {

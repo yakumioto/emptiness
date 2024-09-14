@@ -8,6 +8,6 @@ client:
   keepalive: 25s
 
 auth:
-  type: xor
+  use: xor
   xor:
     key: "k8^4yCjMaG#wC!U@LKY8uf!v5utIztZL"
