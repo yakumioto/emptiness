@@ -5,9 +5,9 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/yakumioto/emptiness/pkg/crypto"
-	"github.com/yakumioto/emptiness/pkg/server"
-	"github.com/yakumioto/emptiness/pkg/tunnel"
+	"github.com/yakumioto/emptiness/crypto"
+	"github.com/yakumioto/emptiness/server"
+	"github.com/yakumioto/emptiness/tunnel"
 )
 
 func main() {

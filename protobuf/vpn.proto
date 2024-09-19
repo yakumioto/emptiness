@@ -3,8 +3,6 @@ syntax = "proto3";
 option go_package = "module github.com/yakumioto/emptiness/protobuf";
 
 service VPN {
-  rpc Connect(Request) returns(Response);
-  rpc Disconnect(Request) returns(Response);
   rpc RegisterRoute(Request) returns(Response);
   rpc UnregisterRoute(Request) returns(Response);
   rpc TransferData(stream StreamRequest) returns (stream StreamResponse);
@@ -40,7 +38,7 @@ message DisconnectRequest {
 
 message RouteRequest {
   string tunnel_id = 1;
-  repeated string route = 2;
+  repeated string routes = 2;
 }
 
 message StreamRequest {
